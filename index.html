@@ -20,6 +20,15 @@ let audioCtx;
 let musicTimer;
 let musicOn = false;
 
+function unlockAudio() {
+  try {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  } catch (e) {}
+}
+
 function sound(type) {
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -258,6 +267,7 @@ function draw(){
 }
 
 function action(){
+ unlockAudio();
  if(state==="menu")reset();
  else if(state==="over")reset();
  else { bird.vy=-7.5*scale; sound("fly"); }
