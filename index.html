@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
-<title>Othithi Bird</title>
+<link rel="manifest" href="manifest.json"><title>Othithi Bird</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{overflow:hidden;font-family:Arial;background:#65d8ff;touch-action:none}
@@ -222,6 +222,13 @@ document.addEventListener("keydown",e=>{
 });
 
 draw();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js");
+  });
+}
 </script>
 </body>
 </html>
