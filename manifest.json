@@ -1,0 +1,19 @@
+{
+  "name": "Othithi Bird",
+  "short_name": "Othithi",
+  "description": "Othithi Bird Flying Game",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#48c9ff",
+  "theme_color": "#48c9ff",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
