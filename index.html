@@ -15,7 +15,53 @@ canvas{display:block;width:100vw;height:100vh}
 <canvas id="game"></canvas>
 <script>
 const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
+const ctx=canvas.getContext("2d");// Othithi Bird Sound System
+let audioCtx;
+let musicTimer;
+let musicOn = false;
+
+function sound(type) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    const sounds = {
+      fly: [500, 750, 0.12],
+      score: [850, 1100, 0.18],
+      over: [300, 100, 0.35]
+    };
+
+    const [start, end, duration] = sounds[type];
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(start, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(end, audioCtx.currentTime + duration);
+
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+
+function startMusic() {
+  if (musicOn) return;
+  musicOn = true;
+  musicTimer = setInterval(() => {
+    if (state === "playing") sound("score");
+  }, 1200);
+}
+
+function stopMusic() {
+  musicOn = false;
+  clearInterval(musicTimer);
+}
 
 let W,H,scale;
 function resize(){
@@ -34,7 +80,7 @@ function reset(){
  pipes=[];
  score=0;
  frame=0;
- state="playing";
+ state="playing"; startMusic();
 }
 
 for(let i=0;i<6;i++){
@@ -45,6 +91,7 @@ for(let i=0;i<6;i++){
 function drawCloud(x,y,s){
  ctx.fillStyle="rgba(255,255,255,.85)";
  ctx.beginPath();
+0
  ctx.arc(x,y,s*.5,0,Math.PI*2);
  ctx.arc(x+s*.45,y-s*.25,s*.65,0,Math.PI*2);
  ctx.arc(x+s,y,s*.5,0,Math.PI*2);
@@ -159,7 +206,7 @@ function draw(){
  drawPipe(p);
 
  if(!p.passed&&p.x+p.w<bird.x){
- score++;
+ score++; sound("score");
  p.passed=true;
  if(score>best){
  best=score;
@@ -169,13 +216,13 @@ function draw(){
 
  if(bird.x+15*scale>p.x&&bird.x-15*scale<p.x+p.w&&
  (bird.y-13*scale<p.top||bird.y+13*scale>p.top+p.gap)){
- state="over";
+ state="over"; sound("over"); stopMusic();
  }
  });
 
  pipes=pipes.filter(p=>p.x>-100*scale);
 
- if(bird.y>H*.89||bird.y<0)state="over";
+ if(bird.y>H*.89||bird.y<0){state="over"; sound("over"); stopMusic();}
  }
 
  if(state!=="menu")drawBird();
@@ -213,7 +260,7 @@ function draw(){
 function action(){
  if(state==="menu")reset();
  else if(state==="over")reset();
- else bird.vy=-7.5*scale;
+ else { bird.vy=-7.5*scale; sound("fly"); }
 }
 
 canvas.addEventListener("pointerdown",action);
