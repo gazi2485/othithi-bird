@@ -1,4 +1,4 @@
-const CACHE_NAME = "othithi-bird-v1";
+const CACHE_NAME = "othithi-bird-v2";
 const FILES = [
   "./",
   "./index.html",
